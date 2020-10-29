@@ -84,7 +84,7 @@ class App extends Component {
 	onPictureSubmit = () => {
 		console.log('click');
 		this.setState({imageUrl: this.state.input});
-		fetch('https://shrouded-forest-77796.herokuapp.com/imageUrl', {
+		fetch('http://shrouded-forest-77796.herokuapp.com/imageUrl', {
 			method: 'post', 
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
@@ -93,7 +93,7 @@ class App extends Component {
 		}).then(res => res.json())
 	 	.then(response => {
 	 		console.log(response);
-	 		fetch('https://shrouded-forest-77796.herokuapp.com/image', {
+	 		fetch('http://shrouded-forest-77796.herokuapp.com/image', {
 			method: 'put', 
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
