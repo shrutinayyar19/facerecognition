@@ -26,7 +26,7 @@ const particlesOptions = {
 const initialState = {
 			input: '',
 			imageUrl: '',
-			box: {},
+			box: [],
 			route: 'signin',
 			isSignedIn: false,
 			user: {
@@ -58,31 +58,31 @@ class App extends Component {
 	}
 
 	onInputChange = (event) => {
-		console.log(event.target.value);
 		this.setState({input: event.target.value});
 	}
 
 	calculateFaceLocation = (data) => {
-		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+		// const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+		const clarifaiFace = data.outputs[0].data.regions;
 		const image = document.getElementById('inputImage');
 		const width = Number(image.width);
 		const height = Number(image.height);
-		console.log(width, height);
-		return {
-			leftCol: clarifaiFace.left_col * width,
-			topRow: clarifaiFace.top_row * height,
-			rightCol: width - (clarifaiFace.right_col * width),
-			bottomRow: height - (clarifaiFace.bottom_row * height)
-		}
+		let boxDimensions = [];
+		clarifaiFace.forEach(data => boxDimensions.push({
+				leftCol: data.region_info.bounding_box.left_col * width,
+				topRow: data.region_info.bounding_box.top_row * height,
+				rightCol: width - (data.region_info.bounding_box.right_col * width),
+				bottomRow: height - (data.region_info.bounding_box.bottom_row * height)
+			})
+		);
+		return boxDimensions;
 	}
 
 	displayFaceBox = (box) => {
-		console.log(box);
 		this.setState({box: box});
 	}
 
 	onPictureSubmit = () => {
-		console.log('click');
 		this.setState({imageUrl: this.state.input});
 		fetch('https://shrouded-forest-77796.herokuapp.com/imageUrl', {
 			method: 'post', 
@@ -92,7 +92,6 @@ class App extends Component {
 				})
 		}).then(res => res.json())
 	 	.then(response => {
-	 		console.log(response);
 	 		fetch('https://shrouded-forest-77796.herokuapp.com/image', {
 			method: 'put', 
 			headers: {'Content-Type': 'application/json'},
